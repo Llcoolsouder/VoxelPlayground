@@ -1,3 +1,9 @@
+# Main excecutable script for sandbox.
+# This is a sandbox project, so this script could do literally anything at a given point in time
+#
+# Author:   Lonnie L. Souder II
+# Date:     11/09/21
+
 from OpenGL.GLUT import *
 from OpenGL.GL import *
 from OpenGL.GLU import *

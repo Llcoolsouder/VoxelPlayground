@@ -1,7 +1,15 @@
+# Code to make voxel grids from other things.
+#
+# Author:   Lonnie L. Souder II
+# Date:     11/09/21
+
 from math import ceil, sqrt
 import numpy as np
 
+
 class Vec3f:
+    '''Simple 3D vector of floats'''
+
     def __init__(self, x=0.0, y=0.0, z=0.0):
         self.x = x
         self.y = y
@@ -9,12 +17,15 @@ class Vec3f:
 
 
 def norm(p: Vec3f, q: Vec3f) -> float:
+    '''Returns distance (L2-norm) between 2 points'''
     return sqrt((p.x - q.x) ** 2 +
                 (p.y - q.y) ** 2 +
                 (p.z - q.z) ** 2)
 
 
 class VoxelGridParams:
+    '''Set of parameters to define a voxel grid in space'''
+
     def __init__(self, resolution: float, min_point: Vec3f, max_point: Vec3f):
         self.resolution = resolution
         self.min_point = min_point
@@ -29,10 +40,11 @@ class VoxelGridParams:
 
 
 class VoxelGrid:
+    '''Container for voxel grid data'''
+
     def __init__(self, params: VoxelGridParams, data):
         self.params = params
         expected_dims = self.params.get_grid_dimensions()
-        data.si
         dimensions_are_correct = (len(data.shape[0]) == expected_dims[0] and
                                   len(data.shape[1]) == expected_dims[1] and
                                   len(data.shape[2]) == expected_dims[2])
