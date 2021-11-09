@@ -1,12 +1,17 @@
-from math import ceil
+from math import ceil, sqrt
 import numpy as np
-
 
 class Vec3f:
     def __init__(self, x=0.0, y=0.0, z=0.0):
         self.x = x
         self.y = y
         self.z = z
+
+
+def norm(p: Vec3f, q: Vec3f) -> float:
+    return sqrt((p.x - q.x) ** 2 +
+                (p.y - q.y) ** 2 +
+                (p.z - q.z) ** 2)
 
 
 class VoxelGridParams:
@@ -54,4 +59,3 @@ def marching_cubes(grid_params: VoxelGridParams, f: function) -> VoxelGrid:
                 index = (x_ind, y_ind, z_ind)
                 voxels[x_ind][y_ind][z_ind] = f(index, grid_params)
     return VoxelGrid(grid_params, voxels)
-
