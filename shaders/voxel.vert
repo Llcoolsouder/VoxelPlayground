@@ -3,8 +3,8 @@
  */
 #version 460 core
 
-layout(location = 0) attribute vec3 aPosition;
-layout(location = 1) attribute float aSdf;
+layout(location = 0) in vec3 aPosition;
+layout(location = 1) in float aSdf;
 
 uniform mat4 uProjectionMatrix;
 uniform mat4 uViewMatrix;
