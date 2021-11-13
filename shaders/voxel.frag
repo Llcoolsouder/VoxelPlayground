@@ -15,6 +15,5 @@ void main()
 {
     float showSdf = 1.0f - step(0.0f, inData.sdf);
     float normalizedSdf = - inData.sdf / (10.0f * uVoxelResolution);
-    // fragColor = vec4(normalizedSdf, normalizedSdf, normalizedSdf, showSdf);
-    fragColor = vec4(1.0, 0.0, 0.0, 1.0);
+    fragColor = vec4(normalizedSdf, normalizedSdf, normalizedSdf, 1.0);
 }

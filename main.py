@@ -18,6 +18,7 @@ from voxelizer import *
 
 WINDOW_SIZE = (1920, 1080)
 
+
 def sphere_sdf(pos: Vec3f, rad: float, point: Vec3f) -> float:
     '''Returns distance from point to surface; positive if outside surface or negative if inside'''
     return norm(pos, point) - rad
@@ -31,10 +32,11 @@ grid_params = VoxelGridParams(
 
 if __name__ == '__main__':
     glfw.init()
-    glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR,3)
-    glfw.window_hint(glfw.CONTEXT_VERSION_MINOR,3)
-    glfw.window_hint(glfw.OPENGL_PROFILE,glfw.OPENGL_CORE_PROFILE)
-    window = glfw.create_window(WINDOW_SIZE[0], WINDOW_SIZE[1], "Voxel Playground", None, None)
+    glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
+    glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
+    glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
+    window = glfw.create_window(
+        WINDOW_SIZE[0], WINDOW_SIZE[1], "Voxel Playground", None, None)
     glfw.make_context_current(window)
 
     glClearColor(0.0, 0.0, 0.0, 1.0)
@@ -55,10 +57,10 @@ if __name__ == '__main__':
                  GL_STATIC_DRAW)
     glEnableVertexAttribArray(0)
     glEnableVertexAttribArray(1)
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 4,
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 16,
                           ctypes.c_void_p(0))  # position
-    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 4,
-                          ctypes.c_void_p(3))  # sdf
+    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 16,
+                          ctypes.c_void_p(12))  # sdf
 
     vertex_shader = glCreateShader(GL_VERTEX_SHADER)
     glShaderSource(vertex_shader, open("./shaders/voxel.vert").read())
@@ -73,11 +75,11 @@ if __name__ == '__main__':
     glUseProgram(program)
 
     view_matrix = glm.lookAt(
-        glm.vec3(0, 0, -2.0),
+        glm.vec3(0, 0, -10.0),
         glm.vec3(0, 0, 0),
         glm.vec3(0, 1, 0))
     projection_matrix = glm.perspective(
-        glm.radians(100.0), WINDOW_SIZE[0] / WINDOW_SIZE[1], 0.01, 1000.0)
+        100, WINDOW_SIZE[0] / WINDOW_SIZE[1], 0.01, 1000.0)
     u_view_mat_loc = glGetUniformLocation(program, "uViewMatrix")
     u_projection_mat_loc = glGetUniformLocation(program, "uProjectionMatrix")
     u_voxel_res_loc = glGetUniformLocation(program, "uVoxelResolution")
@@ -91,4 +93,3 @@ if __name__ == '__main__':
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
         glDrawArrays(GL_POINTS, 0, voxel_grid.data.size)
         glfw.swap_buffers(window)
-
