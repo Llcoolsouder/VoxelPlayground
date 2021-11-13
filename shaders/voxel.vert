@@ -16,10 +16,9 @@ out VERTEX_DATA {
 
 void main()
 {
-    // gl_Position = uProjectionMatrix *
-    //               uViewMatrix *
-    //               uModelMatrix *
-    //               vec4(aPosition, 1.0f);
-    gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+    gl_Position = uProjectionMatrix *
+                  uViewMatrix *
+                  uModelMatrix *
+                  vec4(aPosition, 1.0f);
     outData.sdf = aSdf;
 }

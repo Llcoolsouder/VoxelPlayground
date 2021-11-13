@@ -4,7 +4,7 @@
 # Author:   Lonnie L. Souder II
 # Date:     11/09/21
 
-from OpenGL.GLUT import *
+import glfw
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.raw.GL.ARB.shader_objects import glGetObjectParameterivARB
@@ -16,6 +16,7 @@ import numpy as np
 
 from voxelizer import *
 
+WINDOW_SIZE = (1920, 1080)
 
 def sphere_sdf(pos: Vec3f, rad: float, point: Vec3f) -> float:
     '''Returns distance from point to surface; positive if outside surface or negative if inside'''
@@ -28,32 +29,29 @@ grid_params = VoxelGridParams(
     0.1, Vec3f(-2.0, -2.0, -2.0), Vec3f(2.0, 2.0, 2.0))
 
 
-def display_func():
-    # glDrawArrays(GL_POINTS, 0, voxel_grid.data.size)
-    glDrawArrays(GL_POINTS, 0, 4)
-
-
 if __name__ == '__main__':
-    glutInit()
-    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA)
-    glutInitWindowSize(500, 500)
-    glutInitWindowPosition(100, 100)
-    window = glutCreateWindow("Voxelizer Sandbox")
+    glfw.init()
+    glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR,3)
+    glfw.window_hint(glfw.CONTEXT_VERSION_MINOR,3)
+    glfw.window_hint(glfw.OPENGL_PROFILE,glfw.OPENGL_CORE_PROFILE)
+    window = glfw.create_window(WINDOW_SIZE[0], WINDOW_SIZE[1], "Voxel Playground", None, None)
+    glfw.make_context_current(window)
+
     glClearColor(0.0, 0.0, 0.0, 1.0)
     glEnable(GL_BLEND)
-    glPointSize(100)
+    glEnable(GL_DEPTH_TEST)
+    glDepthFunc(GL_LESS)
+    glPointSize(5)
 
     voxel_grid = marching_cubes(grid_params, my_sdf)
-
-    glClear(GL_COLOR_BUFFER_BIT)
 
     vao = glGenVertexArrays(1)
     vertex_buffer = glGenBuffers(1)
     glBindVertexArray(vao)
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer)
     glBufferData(GL_ARRAY_BUFFER,
-                 # voxel_grid.data,
-                 np.array([0.0, 0.0, 0.0, -1.0], dtype=np.float32),
+                 voxel_grid.data,
+                 #np.array([0.0, 0.0, 0.0, -1.0], dtype=np.float32),
                  GL_STATIC_DRAW)
     glEnableVertexAttribArray(0)
     glEnableVertexAttribArray(1)
@@ -79,7 +77,7 @@ if __name__ == '__main__':
         glm.vec3(0, 0, 0),
         glm.vec3(0, 1, 0))
     projection_matrix = glm.perspective(
-        glm.radians(100.0), 1.0, 0.01, 1000.0)
+        glm.radians(100.0), WINDOW_SIZE[0] / WINDOW_SIZE[1], 0.01, 1000.0)
     u_view_mat_loc = glGetUniformLocation(program, "uViewMatrix")
     u_projection_mat_loc = glGetUniformLocation(program, "uProjectionMatrix")
     u_voxel_res_loc = glGetUniformLocation(program, "uVoxelResolution")
@@ -88,7 +86,9 @@ if __name__ == '__main__':
                        projection_matrix.to_list())
     glUniform1f(u_voxel_res_loc, grid_params.resolution)
 
-    glutDisplayFunc(display_func)
-    glutMainLoop()
+    while not glfw.window_should_close(window):
+        glfw.poll_events()
+        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
+        glDrawArrays(GL_POINTS, 0, voxel_grid.data.size)
+        glfw.swap_buffers(window)
 
-    input("Press any key to close...")
