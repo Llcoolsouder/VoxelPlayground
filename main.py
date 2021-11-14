@@ -11,7 +11,7 @@ from OpenGL.raw.GL.ARB.shader_objects import glGetObjectParameterivARB
 import glm
 
 from functools import partial
-from itertools import chain
+import time
 import numpy as np
 
 from voxelizer import *
@@ -53,7 +53,6 @@ if __name__ == '__main__':
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer)
     glBufferData(GL_ARRAY_BUFFER,
                  voxel_grid.data,
-                 #np.array([0.0, 0.0, 0.0, -1.0], dtype=np.float32),
                  GL_STATIC_DRAW)
     glEnableVertexAttribArray(0)
     glEnableVertexAttribArray(1)
@@ -65,9 +64,11 @@ if __name__ == '__main__':
     vertex_shader = glCreateShader(GL_VERTEX_SHADER)
     glShaderSource(vertex_shader, open("./shaders/voxel.vert").read())
     glCompileShader(vertex_shader)
+
     fragment_shader = glCreateShader(GL_FRAGMENT_SHADER)
     glShaderSource(fragment_shader, open("./shaders/voxel.frag").read())
     glCompileShader(fragment_shader)
+
     program = glCreateProgram()
     glAttachShader(program, vertex_shader)
     glAttachShader(program, fragment_shader)
@@ -75,21 +76,30 @@ if __name__ == '__main__':
     glUseProgram(program)
 
     view_matrix = glm.lookAt(
-        glm.vec3(0, 0, -10.0),
+        glm.vec3(0, 0, -5.0),
         glm.vec3(0, 0, 0),
         glm.vec3(0, 1, 0))
     projection_matrix = glm.perspective(
         100, WINDOW_SIZE[0] / WINDOW_SIZE[1], 0.01, 1000.0)
     u_view_mat_loc = glGetUniformLocation(program, "uViewMatrix")
     u_projection_mat_loc = glGetUniformLocation(program, "uProjectionMatrix")
+    u_model_mat_loc = glGetUniformLocation(program, "uModelMatrix")
     u_voxel_res_loc = glGetUniformLocation(program, "uVoxelResolution")
     glUniformMatrix4fv(u_view_mat_loc, 1, GL_FALSE, view_matrix.to_list())
     glUniformMatrix4fv(u_projection_mat_loc, 1, GL_FALSE,
                        projection_matrix.to_list())
     glUniform1f(u_voxel_res_loc, grid_params.resolution)
 
+    model_matrix = glm.mat4(1.0)
+    frame_time = 0.0
     while not glfw.window_should_close(window):
+        frame_start = time.process_time()
+        model_matrix = glm.rotate(
+            model_matrix, frame_time * glm.radians(1.0), glm.vec3(0.0, 1.0, 0.0))
+        glUniformMatrix4fv(u_model_mat_loc, 1, GL_FALSE,
+                           model_matrix.to_list())
         glfw.poll_events()
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
         glDrawArrays(GL_POINTS, 0, voxel_grid.data.size)
         glfw.swap_buffers(window)
+        frame_time = time.process_time() - frame_start
