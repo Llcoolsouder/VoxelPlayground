@@ -41,6 +41,8 @@ if __name__ == '__main__':
 
     glClearColor(0.0, 0.0, 0.0, 1.0)
     glEnable(GL_BLEND)
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+    glBlendEquation(GL_FUNC_ADD)
     glEnable(GL_DEPTH_TEST)
     glDepthFunc(GL_LESS)
     glPointSize(5)
@@ -95,7 +97,7 @@ if __name__ == '__main__':
     while not glfw.window_should_close(window):
         frame_start = time.process_time()
         model_matrix = glm.rotate(
-            model_matrix, frame_time * glm.radians(1.0), glm.vec3(0.0, 1.0, 0.0))
+            model_matrix, frame_time * glm.radians(15.0), glm.vec3(0.0, 1.0, 0.0))
         glUniformMatrix4fv(u_model_mat_loc, 1, GL_FALSE,
                            model_matrix.to_list())
         glfw.poll_events()
