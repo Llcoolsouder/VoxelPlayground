@@ -36,7 +36,7 @@ if __name__ == '__main__':
     glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
     glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
     window = glfw.create_window(
-        WINDOW_SIZE[0], WINDOW_SIZE[1], "Voxel Playground", None, None)
+        WINDOW_SIZE[0], WINDOW_SIZE[1], 'Voxel Playground', None, None)
     glfw.make_context_current(window)
 
     glClearColor(0.0, 0.0, 0.0, 1.0)
@@ -64,15 +64,20 @@ if __name__ == '__main__':
                           ctypes.c_void_p(12))  # sdf
 
     vertex_shader = glCreateShader(GL_VERTEX_SHADER)
-    glShaderSource(vertex_shader, open("./shaders/voxel.vert").read())
+    glShaderSource(vertex_shader, open('./shaders/voxel.vert').read())
     glCompileShader(vertex_shader)
 
+    geometry_shader = glCreateShader(GL_GEOMETRY_SHADER)
+    glShaderSource(geometry_shader, open('./shaders/voxel.geom').read())
+    glCompileShader(geometry_shader)
+
     fragment_shader = glCreateShader(GL_FRAGMENT_SHADER)
-    glShaderSource(fragment_shader, open("./shaders/voxel.frag").read())
+    glShaderSource(fragment_shader, open('./shaders/voxel.frag').read())
     glCompileShader(fragment_shader)
 
     program = glCreateProgram()
     glAttachShader(program, vertex_shader)
+    glAttachShader(program, geometry_shader)
     glAttachShader(program, fragment_shader)
     glLinkProgram(program)
     glUseProgram(program)
@@ -83,10 +88,10 @@ if __name__ == '__main__':
         glm.vec3(0, 1, 0))
     projection_matrix = glm.perspective(
         100, WINDOW_SIZE[0] / WINDOW_SIZE[1], 0.01, 1000.0)
-    u_view_mat_loc = glGetUniformLocation(program, "uViewMatrix")
-    u_projection_mat_loc = glGetUniformLocation(program, "uProjectionMatrix")
-    u_model_mat_loc = glGetUniformLocation(program, "uModelMatrix")
-    u_voxel_res_loc = glGetUniformLocation(program, "uVoxelResolution")
+    u_view_mat_loc = glGetUniformLocation(program, 'uViewMatrix')
+    u_projection_mat_loc = glGetUniformLocation(program, 'uProjectionMatrix')
+    u_model_mat_loc = glGetUniformLocation(program, 'uModelMatrix')
+    u_voxel_res_loc = glGetUniformLocation(program, 'uVoxelResolution')
     glUniformMatrix4fv(u_view_mat_loc, 1, GL_FALSE, view_matrix.to_list())
     glUniformMatrix4fv(u_projection_mat_loc, 1, GL_FALSE,
                        projection_matrix.to_list())
@@ -97,7 +102,7 @@ if __name__ == '__main__':
     while not glfw.window_should_close(window):
         frame_start = time.monotonic()
         model_matrix = glm.rotate(
-            model_matrix, frame_time * glm.radians(3.0), glm.vec3(0.0, 1.0, 0.0))
+            model_matrix, frame_time * glm.radians(24.0), glm.vec3(0.0, 1.0, 0.0))
         glUniformMatrix4fv(u_model_mat_loc, 1, GL_FALSE,
                            model_matrix.to_list())
         glfw.poll_events()
