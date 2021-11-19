@@ -16,7 +16,7 @@ import numpy as np
 
 from voxelizer import *
 
-WINDOW_SIZE = (1920, 1080)
+WINDOW_SIZE = (1280, 720)
 
 
 def sphere_sdf(pos: Vec3f, rad: float, point: Vec3f) -> float:
@@ -95,13 +95,13 @@ if __name__ == '__main__':
     model_matrix = glm.mat4(1.0)
     frame_time = 0.0
     while not glfw.window_should_close(window):
-        frame_start = time.process_time()
+        frame_start = time.monotonic()
         model_matrix = glm.rotate(
-            model_matrix, frame_time * glm.radians(15.0), glm.vec3(0.0, 1.0, 0.0))
+            model_matrix, frame_time * glm.radians(3.0), glm.vec3(0.0, 1.0, 0.0))
         glUniformMatrix4fv(u_model_mat_loc, 1, GL_FALSE,
                            model_matrix.to_list())
         glfw.poll_events()
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
         glDrawArrays(GL_POINTS, 0, voxel_grid.data.size)
         glfw.swap_buffers(window)
-        frame_time = time.process_time() - frame_start
+        frame_time = time.monotonic() - frame_start
