@@ -15,3 +15,7 @@ python3 -m pip install -r requirements.txt
 This project is hacked together, so I can't (or won't) guarantee anything will work if it deviates at all.  
 
 _From the project's root directory_ run `python3 main.py`. You should get a window that displays whatever final product I decide to leave here.
+
+## Demos
+### Voxelizing a simple SDF and rendering voxels as points
+![Voxelized sphere SDF rendered as points](https://github.com/Llcoolsouder/VoxelPlayground/blob/main/demos/VoxelizedSphere_Points.gif)
