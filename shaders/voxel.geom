@@ -12,7 +12,7 @@ in VERTEX_DATA {
 
 out VERTEX_DATA {
     float sdf;
-    vec4 normal;
+    vec3 normal;
 } outData;
 
 uniform mat4 uProjectionMatrix;
@@ -43,12 +43,14 @@ mat3 RotateAboutY(float rDegrees)
  * @param rotation rotation matrix to rotate a front facing quad
  * @param center center of the cube that this quad is part of
  * @param MVP model-view-projection matrix
+ * @param modelMat separate model matrix
  */
-void GenerateRotatedQuad(mat3 rotation, vec4 center, mat4 MVP)
+void GenerateRotatedQuad(mat3 rotation, vec4 center, mat4 MVP, mat4 modelMat)
 {
     const float halfRes = uVoxelResolution * 0.5f;
-    vec4 normal = (MVP * vec4(rotation * vec3(0, 0, -1), 1.0));
-    normal = normal / normal.z;
+    vec3 normal = normalize(
+        transpose(inverse(mat3(modelMat))) *
+        (rotation * vec3(0, 0, -1)));
 
     outData.sdf = inData[0].sdf;
     outData.normal = normal;
@@ -79,10 +81,13 @@ void main()
                   uModelMatrix;
     const vec4 center = gl_in[0].gl_Position;
 
-    GenerateRotatedQuad(RotateAboutY(0), center, MVP);
-    GenerateRotatedQuad(RotateAboutY(90), center, MVP);
-    GenerateRotatedQuad(RotateAboutY(180), center, MVP);
-    GenerateRotatedQuad(RotateAboutY(270), center, MVP);
-    GenerateRotatedQuad(RotateAboutX(90), center, MVP);
-    GenerateRotatedQuad(RotateAboutX(180), center, MVP);
+    if (inData[0].sdf < 0.0f)
+    {
+        GenerateRotatedQuad(RotateAboutY(0), center, MVP, uModelMatrix);
+        GenerateRotatedQuad(RotateAboutY(90), center, MVP, uModelMatrix);
+        GenerateRotatedQuad(RotateAboutY(180), center, MVP, uModelMatrix);
+        GenerateRotatedQuad(RotateAboutY(270), center, MVP, uModelMatrix);
+        GenerateRotatedQuad(RotateAboutX(90), center, MVP, uModelMatrix);
+        GenerateRotatedQuad(RotateAboutX(180), center, MVP, uModelMatrix);
+    }
 }

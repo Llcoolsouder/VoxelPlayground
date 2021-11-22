@@ -26,8 +26,9 @@ def sphere_sdf(pos: Vec3f, rad: float, point: Vec3f) -> float:
 
 my_sdf = partial(sphere_sdf, Vec3f(0.0, 0.0, 0.0), 1.0)
 
+grid_size = 2.0
 grid_params = VoxelGridParams(
-    0.1, Vec3f(-2.0, -2.0, -2.0), Vec3f(2.0, 2.0, 2.0))
+    0.1, Vec3f(-grid_size, -grid_size, -grid_size), Vec3f(grid_size,  grid_size,  grid_size))
 
 
 if __name__ == '__main__':
