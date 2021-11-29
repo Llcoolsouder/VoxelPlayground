@@ -19,3 +19,6 @@ _From the project's root directory_ run `python3 main.py`. You should get a wind
 ## Demos
 ### Voxelizing a simple SDF and rendering voxels as points
 ![Voxelized sphere SDF rendered as points](https://github.com/Llcoolsouder/VoxelPlayground/blob/main/demos/VoxelizedSphere_Points.gif)
+
+### Voxelizing a simple SDF and rendering voxels as cubes
+![Voxelized sphere SDF rendered as cubes](https://github.com/Llcoolsouder/VoxelPlayground/blob/main/demos/VoxelizedSphere_Cubes.gif)
